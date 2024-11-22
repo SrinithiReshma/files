@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+  <title>AngularJS Built-in Filters</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+</head>
+<body ng-controller="myController">
+
+  <h2>AngularJS Built-in Filters</h2>
+
+  <!-- Original Data -->
+  <p>Original Text: {{ text }}</p>
+  <p>Original Number: {{ number }}</p>
+  <p>Original Array: {{ array }}</p>
+  <p>Original JSON Object: {{ object }}</p>
+
+  <h3>Text Filters:</h3>
+  <p>Uppercase: {{ text | uppercase }}</p>
+  <p>Lowercase: {{ text | lowercase }}</p>
+  <p>Limit to 5 characters: {{ text | limitTo:5 }}</p>
+
+  <h3>Number Filters:</h3>
+  <p>Number (default): {{ number }}</p>
+  <p>Currency: {{ number | currency }}</p>
+  <p>Currency (custom): {{ number | currency:'€':2 }}</p>
+  <p>Formatted Number: {{ number | number:2 }}</p>
+
+  <h3>Array Filters:</h3>
+  <p>Order by (ascending): {{ array | orderBy }}</p>
+  <p>Order by (descending): {{ array | orderBy:'-value' }}</p>
+  <p>Limit to 3 items: {{ array | limitTo:3 }}</p>
+
+  <h3>JSON Filter:</h3>
+  <p>Formatted JSON: {{ object | json }}</p>
+
+  <script>
+    var app = angular.module('myApp', []);
+    app.controller('myController', function($scope) {
+      $scope.text = "Hello AngularJS";
+      $scope.number = 1234.56789;
+      $scope.array = [
+        { name: 'Banana', value: 2 },
+        { name: 'Apple', value: 5 },
+        { name: 'Cherry', value: 3 },
+        { name: 'Date', value: 1 }
+      ];
+      $scope.object = {
+        name: "John",
+        age: 25,
+        skills: ["JavaScript", "AngularJS", "HTML"]
+      };
+    });
+  </script>
+
+</body>
+</html>
