@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="eventApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Management</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.2/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.8.2/angular-route.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { max-width: 600px; margin: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        table, th, td { border: 1px solid black; }
+        th, td { padding: 10px; text-align: left; }
+    </style>
+</head>
+<body ng-controller="EventController as eventCtrl">
+
+    <div class="container">
+        <h1>Event Management</h1>
+
+        <!-- Add Event Form -->
+        <form ng-submit="eventCtrl.addEvent()">
+            <h3>Add Event</h3>
+            <label>Name:</label>
+            <input type="text" ng-model="eventCtrl.newEvent.name" required><br><br>
+
+            <label>Date:</label>
+            <input type="date" ng-model="eventCtrl.newEvent.date" required><br><br>
+
+            <label>Location:</label>
+            <input type="text" ng-model="eventCtrl.newEvent.location" required><br><br>
+
+            <label>Description:</label>
+            <textarea ng-model="eventCtrl.newEvent.description" required></textarea><br><br>
+
+            <button type="submit">Add Event</button>
+        </form>
+
+        <hr>
+
+        <!-- Event List -->
+        <h3>Event List</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th>Location</th>
+                    <th>Description</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="event in eventCtrl.events">
+                    <td>{{event.name}}</td>
+                    <td>{{event.date | date:'MM/dd/yyyy'}}</td>
+                    <td>{{event.location}}</td>
+                    <td>{{event.description}}</td>
+                    <td>
+                        <button ng-click="eventCtrl.deleteEvent(event._id)">Delete</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        var app = angular.module('eventApp', []);
+
+        // Event Service
+        app.service('EventService', ['$http', function($http) {
+            this.getEvents = function() {
+                return $http.get('/get-events');
+            };
+            
+            this.addEvent = function(event) {
+                return $http.post('/add-event', event);
+            };
+            
+            this.deleteEvent = function(id) {
+                return $http.delete('/delete-event/' + id);
+            };
+        }]);
+
+        // Event Controller
+        app.controller('EventController', ['EventService', function(EventService) {
+            var self = this;
+            self.newEvent = {};
+            self.events = [];
+
+            // Fetch all events
+            self.getEvents = function() {
+                EventService.getEvents()
+                    .then(function(response) {
+                        self.events = response.data;
+                    }, function(error) {
+                        console.error('Error fetching events:', error);
+                    });
+            };
+
+            // Add new event
+            self.addEvent = function() {
+                EventService.addEvent(self.newEvent)
+                    .then(
+                        function(response) {
+                        console.log('Event added:', response.data);
+                        self.newEvent = {}; // Clear the form
+                        self.getEvents(); // Refresh event list
+                    }, 
+                    function(error) {
+                        console.error('Error adding event:', error);
+                    });
+            };
+
+            // Delete event
+            self.deleteEvent = function(id) {
+                EventService.deleteEvent(id)
+                    .then(
+                        function(response) {
+                        console.log('Event deleted:', response.data);
+                        self.getEvents(); // Refresh event list
+                    }, function(error) {
+                        console.error('Error deleting event:', error);
+                    });
+            };
+
+            // Initial call to get events
+            self.getEvents();
+        }]);
+    </script>
+
+</body>
+</html>
