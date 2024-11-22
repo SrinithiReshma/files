@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+  <title>AngularJS Built-in Filters with Service</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+</head>
+<body ng-controller="myController">
+
+  <h2>AngularJS Filters with Service</h2>
+
+  <!-- Original Data -->
+  <p>Original Text: {{ text }}</p>
+  <p>Uppercase: {{ text | uppercase }}</p>
+  <p>Lowercase: {{ text | lowercase }}</p>
+
+  <h3>Numbers:</h3>
+  <p>Original Number: {{ number }}</p>
+  <p>Currency: {{ number | currency }}</p>
+  <p>Formatted Number: {{ number | number:2 }}</p>
+
+  <h3>Array Data (From Service):</h3>
+  <p>Original Array: {{ data }}</p>
+  <p>Order by Name (Ascending): {{ data | orderBy:'name' }}</p>
+  <p>Limit to 2 items: {{ data | limitTo:2 }}</p>
+
+  <h3>JSON:</h3>
+  <p>JSON Output: {{ data | json }}</p>
+
+  <script>
+    // Define the AngularJS app
+    var app = angular.module('myApp', []);
+
+    // Create a service
+    app.service('dataService', function() {
+      this.getData = function() {
+        return [
+          { name: 'Banana', value: 2 },
+          { name: 'Apple', value: 5 },
+          { name: 'Cherry', value: 3 }
+        ];
+      };
+    });
+
+    // Create a controller
+    app.controller('myController', function($scope, dataService) {
+      $scope.text = "Hello AngularJS Service";
+      $scope.number = 1234.56789;
+      $scope.data = dataService.getData();
+    });
+  </script>
+
+</body>
+</html>
